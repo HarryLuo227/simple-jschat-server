@@ -1,0 +1,17 @@
+{
+  "name": "simple-jschat-server",
+  "version": "0.0.0",
+  "description": "A simple practice project of chat server developed in JavaScript.",
+  "main": "app.js",
+  "scripts": {
+    "dev": "node --env-file=./envs/localhost.env app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Harry",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.19.2",
+    "morgan": "^1.10.0",
+    "winston": "^3.13.0"
+  }
+}
