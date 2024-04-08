@@ -15,7 +15,7 @@ const indexRouter = require('./routes/index');
 app.use(morgan('tiny', { stream, skip }));
 app.use('/', indexRouter);
 
-app.get('/', (req, res) => {
+app.get('/', async (req, res) => {
     logger.debug('Get index page');
     res.sendFile(path.join(__dirname, 'views/index.html'));
 });
