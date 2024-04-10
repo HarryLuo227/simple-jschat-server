@@ -7,6 +7,8 @@ const stream = {
 const skip = () => {
     return config.RunMode !== 'debug';
 }
+const { WebSocketServer } = require('ws');
+const wsHandler = require('./utils/wsHandler');
 const express = require('express');
 const app = express();
 const path = require('path');
@@ -23,6 +25,26 @@ app.get('/', async (req, res) => {
     res.sendFile(path.join(__dirname, 'views/index.html'));
 });
 
-app.listen(config.ServerPort, () => {
+const server = app.listen(config.ServerPort, () => {
     logger.info(`Server is running on http://${config.ServerAddr}:${config.ServerPort} in ${config.RunMode} mode`);
+});
+
+const wss = new WebSocketServer({ noServer: true });
+
+server.on('upgrade', (req, socket, head) => {
+    wsHandler.handleUpgrade(wss, req, socket, head);
+});
+
+wss.on('connection', (ws, req) => {
+    logger.info('New client connect chatroom');
+
+    ws.send('You now can chat with your friend!');
+    
+    ws.on('error', (err) => {
+        logger.error(`Error occurred in client side of WebSocket connection: ${err}`);
+    });
+    
+    ws.on('message', (data) => {
+        logger.debug(`Received data from ${req.headers['sec-websocket-key']} client: ${data}`);
+    });
 });

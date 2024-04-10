@@ -22,5 +22,20 @@
         <form id="form" action="">
             <input id="input" autocomplete="off" /><button>Send</button>
         </form>
+        <script>
+            const endpoint = window.location.pathname;
+            const wsUrl = `ws://localhost:8080${endpoint}`;
+            const ws = new WebSocket(wsUrl);
+
+            ws.onerror = (error) => {
+                console.error(error);
+            }
+            ws.onopen = (event) => {
+                console.log('Successfully connect to the websocket server');
+            }
+            ws.onmessage = (event) => {
+                console.log('Receive from websocket server: ', event.data);
+            }
+        </script>
     </body>
 </html>
