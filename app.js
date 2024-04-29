@@ -37,14 +37,15 @@ server.on('upgrade', (req, socket, head) => {
 
 wss.on('connection', (ws, req) => {
     logger.info('New client connect chatroom');
-
     ws.send('You now can chat with your friend!');
     
     ws.on('error', (err) => {
         logger.error(`Error occurred in client side of WebSocket connection: ${err}`);
     });
     
-    ws.on('message', (data) => {
+    ws.on('message', async (data) => {
         logger.debug(`Received data from ${req.headers['sec-websocket-key']} client: ${data}`);
+        const reqPayload = JSON.parse(data);
+        await wsHandler.handleEvents(ws, reqPayload);
     });
 });

@@ -61,9 +61,16 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-router.get('/:id/chat', async (req, res) => {
+router.get('/:id/chat', (req, res) => {
+    logger.debug('Redirect to default chatroom');
+    const userId = req.params.id;
+    const defaultChatUUID = '9667fd9d-051d-415e-b968-7a91cd6fa755'
+    res.redirect(`/api/v1/users/${userId}/chat/${defaultChatUUID}`);
+});
+
+router.get('/:id/chat/:uuid', async (req, res) => {
     try {
-        logger.debug('Enter chatroom');
+        logger.debug('Enter default chatroom');
         res.status(200).sendFile(path.join(__dirname, '../../../views/chatroom.html'));
     } catch (err) {
         logger.error(`Error caught in routes/users: ${err}`);
