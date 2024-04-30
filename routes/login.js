@@ -4,6 +4,17 @@ const router = express.Router();
 const path = require('path');
 const loginService = require('../services/login');
 
+/**
+ * @swagger
+ * /login:
+ *   get:
+ *     description: Return login page
+ *     responses:
+ *       200:
+ *         description: Success
+ *       404:
+ *         description: Not Found
+ */
 router.get('/', async (req, res) => {
     try {
         logger.debug('Get user login page');
@@ -14,6 +25,47 @@ router.get('/', async (req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /login:
+ *   post:
+ *     description: User login
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - account
+ *               - password
+ *             properties:
+ *               account:
+ *                 type: string
+ *                 default: test@example.com
+ *               password:
+ *                 type: string
+ *                 default: 123456
+ *     responses:
+ *       200:
+ *         description: Register success and Return json web token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/UserModel'
+ *       400:
+ *         description: Register fail, client error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/ErrorResponse'
+ *       500:
+ *         description: Register fail, internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/ErrorResponse'
+ */
 router.post('/', async (req, res) => {
     try {
         logger.debug('User login');

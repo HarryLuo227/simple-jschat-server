@@ -7,6 +7,24 @@ const stream = {
 const skip = () => {
     return config.RunMode !== 'debug';
 }
+const swaggerUI = require('swagger-ui-express');
+const swaggerJSDoc = require('swagger-jsdoc');
+const swaggerOptions = {
+    definition: {
+        openapi: '3.0.0',
+        info: {
+            title: 'Simple-Jschat-API',
+            version: '1.0.0',
+            description: 'API list of simple-jschat-server'
+        }
+    },
+    apis: [
+        './routes/*.js',
+        // v1
+        './routes/api/v1/*.js'
+    ]
+}
+const swaggerSpec = swaggerJSDoc(swaggerOptions);
 const { WebSocketServer } = require('ws');
 const wsHandler = require('./utils/wsHandler');
 const express = require('express');
@@ -16,6 +34,7 @@ const bodyParser = require('body-parser');
 
 const indexRouter = require('./routes/index');
 
+app.use('/api/docs', swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 app.use(morgan('tiny', { stream, skip }));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());

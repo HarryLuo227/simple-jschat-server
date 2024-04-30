@@ -5,6 +5,36 @@ const path = require('path');
 const userService = require('../../../services/users');
 const channelService = require('../../../services/channels');
 
+/**
+ * @swagger
+ * components:
+ *   UserModel:
+ *     type: object
+ *     properties:
+ *       id:
+ *         type: integer
+ *         default: 1
+ *       fullname:
+ *         type: string
+ *         default: tester
+ *       account:
+ *         type: string
+ *         default: test@example.com
+ *       password:
+ *         type: string
+ *         default: 123456
+ *       birth:
+ *         type: string
+ *         format: date
+ *         default: 2000-01-01
+ *       created_at:
+ *         type: string
+ *         format: date-time
+ *       modified_at:
+ *         type: string
+ *         format: date-time
+ */
+
 router.get('/', async (req, res) => {
     try {
         logger.debug('List all users info');
