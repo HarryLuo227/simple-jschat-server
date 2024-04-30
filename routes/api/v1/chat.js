@@ -7,10 +7,10 @@ router.post('/', async (req, res) => {
     try {
         logger.debug('Add message');
         const result = await chatService.create(req, res);
-        res.status(201).end();
+        res.status(201).json(result);
     } catch (err) {
         logger.error(`Error caught in routes/chat: ${err}`);
-        res.status(400).json({
+        res.status(500).json({
             ErrorMsg: err
         });
     }

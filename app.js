@@ -18,6 +18,7 @@ const indexRouter = require('./routes/index');
 
 app.use(morgan('tiny', { stream, skip }));
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 app.use('/', indexRouter);
 
 app.get('/', async (req, res) => {
@@ -49,3 +50,5 @@ wss.on('connection', (ws, req) => {
         await wsHandler.handleEvents(ws, reqPayload);
     });
 });
+
+module.exports = server;

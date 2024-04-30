@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 const path = require('path');
 const userService = require('../../../services/users');
+const channelService = require('../../../services/channels');
 
 router.get('/', async (req, res) => {
     try {
@@ -58,6 +59,19 @@ router.get('/:id', async (req, res) => {
                 });
                 break;
         }
+    }
+});
+
+router.get('/:id/channels', async (req, res) => {
+    try {
+        logger.debug('List all user\'s channels');
+        const result = await channelService.listAllChannelsByUser(req, res);
+        res.status(200).json(result);
+    } catch (err) {
+        logger.error(`Error caught in routes/users: ${err}`);
+        res.status(500).json({
+            ErrorMsg: err
+        });
     }
 });
 

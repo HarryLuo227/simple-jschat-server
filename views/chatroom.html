@@ -61,6 +61,18 @@
       <input id="input" autocomplete="off" /><button>Send</button>
     </form>
     <script>
+      const messages = document.getElementById("messages");
+      // TODO: Foolish solution, fix in the future
+      function updateMessagesView(msgs) {
+        // Clear all li element
+        messages.innerHTML = "";
+        // Insert each messages
+        for (let i = 0; i < msgs.length; i++) {
+          const item = document.createElement("li");
+          item.textContent = msgs[i].content;
+          messages.appendChild(item);
+        }
+      }
       const endpoint = window.location.pathname;
       const wsUrl = `ws://localhost:8080${endpoint}`;
       const ws = new WebSocket(wsUrl);
@@ -72,8 +84,24 @@
         console.log("Successfully connect to the websocket server");
       };
       ws.onmessage = (event) => {
-        console.log("Receive from websocket server: ", event.data);
+        if (event.data === "You now can chat with your friend!") {
+          console.log("Receive from websocket server: ", event.data);
+        } else {
+          console.log(
+            "Receive from websocket server: ",
+            JSON.parse(event.data)
+          );
+          let msgs = JSON.parse(event.data).payload;
+          updateMessagesView(msgs);
+        }
       };
+      setInterval(() => {
+        const reqPayload = {
+          endpoint: endpoint,
+          event: "CHAT",
+        };
+        ws.send(JSON.stringify(reqPayload));
+      }, 500);
     </script>
   </body>
 </html>
