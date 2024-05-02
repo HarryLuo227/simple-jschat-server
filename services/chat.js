@@ -9,7 +9,6 @@ async function getByChannel(channelId) {
             channelId
         ]
         const result = await db.exec(sql, values);
-        logger.debug(result);
         return result.rows;
     } catch (err) {
         logger.error('Error occurred in services/chat');
