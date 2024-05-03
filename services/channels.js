@@ -16,6 +16,62 @@ async function listAllChannelsByUser(req, res) {
     }
 }
 
+async function create(req, res) {
+    const client = await db.pool.connect();
+
+    try {
+        logger.debug('Create channel');
+        logger.debug('Start transaction');
+        await client.query('BEGIN');
+
+        const createChannelSql = 'INSERT INTO channels(name, type) VALUES ($1, $2) RETURNING *';
+        const createChannelValues = [
+            req.body.name,
+            req.body.type,
+        ]
+        const createChannelResult = await client.query(createChannelSql, createChannelValues);
+        if(createChannelResult.rowCount !== 1) {
+            logger.error('Throw custom error within services/channels: Insert channel error');
+            throw new Error('Insert channel error');
+        }
+
+        const createUserChannelSql = 'INSERT INTO user_channels(user_id, channel_id) VALUES ($1, $2) RETURNING *';
+        const createUserChannelValues = [
+            req.body.userId,
+            createChannelResult.rows[0].id
+        ]
+        const createUserChannelResult = await client.query(createUserChannelSql, createUserChannelValues);
+        if(createUserChannelResult.rowCount !== 1) {
+            logger.error('Throw custom error within services/channels: Insert user_channels error');
+            throw new Error('Insert user_channels error');
+        }
+
+        logger.debug('Transaction succeeded');
+        await client.query('COMMIT');
+
+        return {
+            channel: createChannelResult.rows[0],
+            userChannels: createUserChannelResult.rows[0]
+        }
+    } catch (err) {
+        logger.debug('Transaction failed and rollback');
+        await client.query('ROLLBACK');
+
+        if(err.message === 'Insert channel error') {
+            throw err;
+        } else if(err.message === 'Insert user_channels error') {
+            throw err;
+        } else {
+            logger.error(`Error occurred in services/channels: ${err}`);
+            throw err;
+        }
+    } finally {
+        client.release();
+        logger.debug('Close transaction');
+    }
+}
+
 module.exports = {
-    listAllChannelsByUser
+    listAllChannelsByUser,
+    create
 }

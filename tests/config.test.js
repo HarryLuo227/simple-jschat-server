@@ -1,5 +1,4 @@
 const config = require('../configs/config');
-const request = require('supertest');
 
 const localConfig = {
     RunMode: 'debug',
