@@ -11,6 +11,10 @@ const localConfig = {
     DBUser: 'postgres',
     DBPassword: '123456',
     DBName: 'jschat',
+
+    JwtExpiresIn: '300',
+    JwtIssuer: 'jschat-server',
+    JwtSecret: 'jschat-app-secret-key'
 }
 
 describe('Application default setting', () => {

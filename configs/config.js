@@ -8,7 +8,11 @@ const config = {
     DBPort: process.env.DB_PORT,
     DBUser: process.env.DB_USER,
     DBPassword: process.env.DB_PASSWORD,
-    DBName: process.env.DB_NAME
+    DBName: process.env.DB_NAME,
+
+    JwtExpiresIn: process.env.JWT_EXPIRESIN,
+    JwtIssuer: process.env.JWT_ISSUER,
+    JwtSecret: process.env.JWT_SECRET
 }
 
 module.exports = config;

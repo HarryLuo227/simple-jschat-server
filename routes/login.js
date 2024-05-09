@@ -14,6 +14,8 @@ const loginService = require('../services/login');
  *         description: Success
  *       404:
  *         description: Not Found
+ *       500:
+ *         description: Internal Server Error
  */
 router.get('/', async (req, res) => {
     try {
@@ -21,7 +23,7 @@ router.get('/', async (req, res) => {
         res.status(200).sendFile(path.join(__dirname, '../views/login.html'));
     } catch (err) {
         logger.error(`Unexpected error occurred: ${err}`);
-        res.status(404).send('Not found');
+        res.status(500).end();
     }
 });
 
@@ -42,25 +44,29 @@ router.get('/', async (req, res) => {
  *             properties:
  *               account:
  *                 type: string
- *                 default: test@example.com
+ *                 default: tester@example.com
  *               password:
  *                 type: string
  *                 default: 123456
  *     responses:
  *       200:
- *         description: Register success and Return json web token
+ *         description: Login success and Return json web token
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/UserModel'
+ *               type: object
+ *               properties:
+ *                 token:
+ *                   type: string
+ *                   default: xxxxxxxxxx.yyyyyyyyyy.zzzzzzzzzz
  *       400:
- *         description: Register fail, client error
+ *         description: Login fail, client error
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/ErrorResponse'
  *       500:
- *         description: Register fail, internal server error
+ *         description: Login fail, internal server error
  *         content:
  *           application/json:
  *             schema:
@@ -71,6 +77,7 @@ router.post('/', async (req, res) => {
         logger.debug('User login');
         const result = await loginService.login(req, res);
         if(result) {
+            res.cookie('token', result.token, { expires: new Date(Date.now()+300000) });
             res.status(200).json(result);
         }
     } catch (err) {
@@ -81,7 +88,7 @@ router.post('/', async (req, res) => {
                     ErrorMsg: err.message
                 });
                 break;
-            case 'Db error':
+            case 'Unexpected error occurred':
                 logger.error(`Error caught in routes/login: ${err.message}`);
                 res.status(500).json({
                     ErrorMsg: err.message
@@ -95,6 +102,6 @@ router.post('/', async (req, res) => {
                 break;
         }
     }
-})
+});
 
 module.exports = router;
