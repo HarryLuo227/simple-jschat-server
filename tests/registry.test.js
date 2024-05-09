@@ -2,6 +2,12 @@ const request = require('supertest');
 const server = require('../app');
 const db = require('../db/index');
 
+afterEach(async () => {
+    if(server) {
+        server.close();
+    }
+});
+
 const succeed201Payload = {
     fullname: 'unit-tester',
     account: 'unit-tester@example.com',
