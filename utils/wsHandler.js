@@ -1,12 +1,19 @@
 const logger = require('./logger');
 const util = require('./util');
+const jwt = require('./jwt');
 const chatService = require('../services/chat');
 
-function handleUpgrade(wss, request, socket, head) {
+async function handleUpgrade(wss, request, socket, head) {
     logger.info('Handle websocket connection');
     const pathname = util.trimRedundantSlash(request.url);
     const pathRegex = /(\/api\/v1\/users\/[\d]+\/chat\/[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12})/g;
-    if(util.isMatchRegex(pathname, pathRegex)) {
+    const token = jwt.getAccessTokenFromHeader(request.rawHeaders);
+    if(!token) {
+        logger.error('Error caught in handle connection upgrade: without jwt token, unauthorization');
+        return;
+    }
+    const isValid = await jwt.verifyAccessToken(token, jwt.getSecret());
+    if(util.isMatchRegex(pathname, pathRegex) && isValid) {
         logger.debug(`${pathname} upgrade connection`);
         wss.handleUpgrade(request, socket, head, (ws) => {
             wss.emit('connection', ws, request);
