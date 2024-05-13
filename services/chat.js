@@ -11,7 +11,7 @@ async function getByChannel(channelId) {
         const result = await db.exec(sql, values);
         return result.rows;
     } catch (err) {
-        logger.error('Error occurred in services/chat');
+        logger.error(`Error occurred in services/chat: ${err}`);
         throw err;
     }
 }
@@ -20,12 +20,10 @@ async function getByChannel(channelId) {
 async function create(req, res) {
     try {
         logger.debug('Create message');
-        const sql = 'INSERT INTO messages(content, from_user, created_at, belongs_to) VALUES ($1, $2, $3, $4) RETURNING *';
-        const current = new Date();
+        const sql = 'INSERT INTO messages(content, from_user, belongs_to) VALUES ($1, $2, $3) RETURNING *';
         const values = [
             req.body.content,
             req.body.userId,
-            current,
             req.body.channelId
         ]
         const result = await db.exec(sql, values);
