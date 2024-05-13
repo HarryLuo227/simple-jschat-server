@@ -33,8 +33,40 @@ const channelService = require('../../../services/channels');
  *       modified_at:
  *         type: string
  *         format: date-time
+ *   ChannelModel:
+ *     type: object
+ *     properties:
+ *       id:
+ *         type: string
+ *         format: uuid
+ *         default: 9667fd9d-051d-415e-b968-7a91cd6fa755
+ *       name:
+ *         type: string
+ *         default: General
+ *       type:
+ *         type: string
+ *         default: public
  */
 
+/**
+ * @swagger
+ * /api/v1/users:
+ *   get:
+ *     description: List all users
+ *     responses:
+ *       200:
+ *         description: Success and Return the user object array
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/UserModel'
+ *       500:
+ *         description: Failure and Return json object with error message
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/ErrorResponse'
+ */
 router.get('/', async (req, res) => {
     try {
         logger.debug('List all users info');
@@ -52,23 +84,42 @@ router.get('/', async (req, res) => {
                 break;
         }
     } catch (err) {
-        switch(err.message) {
-            case 'Db error':
-                logger.error(`Error caught in routes/users: ${err.message}`);
-                res.status(500).json({
-                    ErrorMsg: err.message
-                });
-                break;
-            default:
-                logger.error(`Error caught in routes/users: ${err}`);
-                res.status(500).json({
-                    ErrorMsg: err
-                });
-                break;
-        }
+        logger.error(`Error caught in routes/users: ${err}`);
+        res.status(500).json({
+            ErrorMsg: err
+        });
     }
 });
 
+/**
+ * @swagger
+ * /api/v1/users/{userId}:
+ *   get:
+ *     description: Get user details by user id
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *     responses:
+ *       200:
+ *         description: Success and Return the user object
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/UserModel'
+ *       404:
+ *         description: Failure and Return json object with error message
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/ErrorResponse'
+ *       500:
+ *         description: Failure and Return json object with error message
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/ErrorResponse'
+ */
 router.get('/:id', async (req, res) => {
     try {
         logger.debug('Get specific user info');
@@ -76,7 +127,7 @@ router.get('/:id', async (req, res) => {
         res.status(200).json(result);
     } catch (err) {
         switch(err.message) {
-            case 'Db error':
+            case 'Not Found':
                 logger.error(`Error caught in routes/users: ${err.message}`);
                 res.status(404).json({
                     ErrorMsg: err.message
@@ -85,23 +136,64 @@ router.get('/:id', async (req, res) => {
             default:
                 logger.error(`Error caught in routes/users: ${err}`);
                 res.status(500).json({
-                    ErrorMsg: err
+                    ErrorMsg: err.message
                 });
                 break;
         }
     }
 });
 
+/**
+ * @swagger
+ * /api/v1/users/{userId}/channels:
+ *   get:
+ *     description: List user's all channels by user id
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *     responses:
+ *       200:
+ *         description: Success and Return the channel object array
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/ChannelModel'
+ *       404:
+ *         description: Failure and Return json object with error message
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/ErrorResponse'
+ *       500:
+ *         description: Failure and Return json object with error message
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/ErrorResponse'
+ */
 router.get('/:id/channels', async (req, res) => {
     try {
         logger.debug('List all user\'s channels');
         const result = await channelService.listAllChannelsByUser(req, res);
         res.status(200).json(result);
     } catch (err) {
-        logger.error(`Error caught in routes/users: ${err}`);
-        res.status(500).json({
-            ErrorMsg: err
-        });
+        switch(err.message) {
+            case 'Not Found':
+                logger.error(`Error caught in routes/users: ${err.message}`);
+                res.status(404).json({
+                    ErrorMsg: err.message
+                });
+                break;
+            default:
+                logger.error(`Error caught in routes/users: ${err}`);
+                res.status(500).json({
+                    ErrorMsg: err.message
+                });
+                break;
+        }
     }
 });
 

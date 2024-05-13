@@ -4,7 +4,7 @@ const db = require('../db/index');
 async function list(req, res) {
     try {
         logger.debug('Get all users info');
-        const sql = 'SELECT * FROM users'
+        const sql = 'SELECT * FROM users';
         const result = await db.exec(sql);
         return result.rows;
     } catch (err) {
@@ -24,8 +24,10 @@ async function get(req, res) {
                 case 1:
                     return result.rows[0];
                 default:
-                    throw new Error('Db error');
+                    throw new Error('Not Found');
             }
+        } else {
+            throw new Error('Database error');
         }
     } catch (err) {
         logger.error(`Error occurred in services/users: ${err}`);

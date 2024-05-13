@@ -12,7 +12,7 @@ const localConfig = {
     DBPassword: '123456',
     DBName: 'jschat',
 
-    JwtExpiresIn: '300',
+    JwtExpiresIn: '300000',
     JwtIssuer: 'jschat-server',
     JwtSecret: 'jschat-app-secret-key'
 }

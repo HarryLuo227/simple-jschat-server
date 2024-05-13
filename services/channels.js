@@ -9,6 +9,9 @@ async function listAllChannelsByUser(req, res) {
             req.params.id
         ]
         const result = await db.exec(sql, values);
+        if(result.rowCount === 0) {
+            throw new Error('Not Found');
+        }
         return result.rows;
     } catch (err) {
         logger.error(`Error occurred in services/channels: ${err}`);
