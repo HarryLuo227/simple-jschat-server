@@ -91,7 +91,13 @@ router.post('/', async (req, res) => {
                     ErrorMsg: err.message
                 });
                 break;
-            case 'Unexpected error occurred':
+            case 'Unexpected error occurred in register new user':
+                logger.error(`Error caught in routes/registry: ${err.message}`);
+                res.status(500).json({
+                    ErrorMsg: err.message
+                });
+                break;
+            case 'Add default channel for new user error':
                 logger.error(`Error caught in routes/registry: ${err.message}`);
                 res.status(500).json({
                     ErrorMsg: err.message

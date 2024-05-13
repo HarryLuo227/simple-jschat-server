@@ -83,10 +83,18 @@ describe('POST /registry', () => {
 
 async function removeRegistryTestData() {
     try {
-        const sql = 'DELETE FROM users WHERE account = $1';
+        const getNewUserIdSql = 'SELECT id FROM users WHERE account = $1';
         const values = [
             postRequestPayload.Succeed201.account
         ]
+        const res = await db.exec(getNewUserIdSql, values);
+        const removeTestDataDefaultChannelSql = 'DELETE FROM user_channels WHERE user_id = $1 AND channel_id = $2';
+        const removeTestDataDefaultChannelValues = [
+            res.rows[0].id,
+            '9667fd9d-051d-415e-b968-7a91cd6fa755'
+        ]
+        await db.exec(removeTestDataDefaultChannelSql, removeTestDataDefaultChannelValues);
+        const sql = 'DELETE FROM users WHERE account = $1';
         await db.exec(sql, values);
     } catch (err) {
         console.error(err);
