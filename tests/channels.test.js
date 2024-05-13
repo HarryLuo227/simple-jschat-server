@@ -1,5 +1,6 @@
 const request = require('supertest');
 const server = require('../app');
+const db = require('../db/index');
 
 afterEach(async () => {
     if(server) {
@@ -8,7 +9,7 @@ afterEach(async () => {
 });
 
 const succeed201payload = {
-    name: 'Family',
+    name: 'test',
     type: 'public',
     userId: 1,
 }
@@ -26,7 +27,25 @@ describe('POST /api/v1/channels', () => {
 
         expect(res.body.channel.name).toEqual(postRequestPayload.Succeed201.name);
         expect(res.body.channel.type).toEqual(postRequestPayload.Succeed201.type);
-        expect(res.body.userChannels.user_id).toEqual(postRequestPayload.Succeed201.userId);
-        expect(res.body.userChannels.channel_id).toEqual(res.body.channel.id);
+
+        await removeTestChannel(res.body.channel.id);
     });
 });
+
+async function removeTestChannel(channelId) {
+    try {
+        const removeUserChannelsSql = 'DELETE FROM user_channels WHERE user_id = $1 AND channel_id = $2';
+        const removeUserChannelsValues = [
+            postRequestPayload.Succeed201.userId,
+            channelId
+        ]
+        await db.exec(removeUserChannelsSql, removeUserChannelsValues);
+        const sql = 'DELETE FROM channels WHERE id = $1';
+        const values = [
+            channelId
+        ]
+        await db.exec(sql, values);
+    } catch (err) {
+        console.error(err);
+    }
+}

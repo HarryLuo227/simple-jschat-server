@@ -53,8 +53,7 @@ async function create(req, res) {
         await client.query('COMMIT');
 
         return {
-            channel: createChannelResult.rows[0],
-            userChannels: createUserChannelResult.rows[0]
+            channel: createChannelResult.rows[0]
         }
     } catch (err) {
         logger.debug('Transaction failed and rollback');

@@ -33,19 +33,6 @@ const channelService = require('../../../services/channels');
  *       modified_at:
  *         type: string
  *         format: date-time
- *   ChannelModel:
- *     type: object
- *     properties:
- *       id:
- *         type: string
- *         format: uuid
- *         default: 9667fd9d-051d-415e-b968-7a91cd6fa755
- *       name:
- *         type: string
- *         default: General
- *       type:
- *         type: string
- *         default: public
  */
 
 /**
