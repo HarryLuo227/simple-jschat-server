@@ -8,6 +8,11 @@ afterEach(async () => {
     }
 });
 
+const loginPayload = {
+    account: 'tester@example.com',
+    password: '123456'
+}
+
 const succeed201payload = {
     content: 'This is a unit test message sent from user {tester} !!!',
     userId: 1,
@@ -21,8 +26,14 @@ const postRequestPayload = {
 describe('POST /api/v1/chat', () => {
     it('should 201 success and return json object', async () => {
         const endpoint = '/api/v1/chat';
+        const loginRes = await request(server)
+            .post('/login')
+            .type('application/x-www-form-urlencoded')
+            .send(loginPayload)
+            .expect(200);
         const res = await request(server)
             .post(endpoint)
+            .set('Cookie', [`token=${loginRes.body.token}`])
             .send(postRequestPayload.Succeed201)
             .expect(201);
 

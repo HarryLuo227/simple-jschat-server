@@ -31,6 +31,7 @@ const express = require('express');
 const app = express();
 const path = require('path');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 
 const indexRouter = require('./routes/index');
 
@@ -38,6 +39,7 @@ app.use('/api/docs', swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 app.use(morgan('tiny', { stream, skip }));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(cookieParser());
 app.use('/', indexRouter);
 
 app.get('/', async (req, res) => {

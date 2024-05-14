@@ -8,6 +8,11 @@ afterEach(async () => {
     }
 });
 
+const loginPayload = {
+    account: 'tester@example.com',
+    password: '123456'
+}
+
 const succeed201payload = {
     name: 'test',
     type: 'public',
@@ -19,9 +24,15 @@ const postRequestPayload = {
 }
 
 describe('POST /api/v1/channels', () => {
-    it('should return 201 success and the json object', async () => {        
+    it('should return 201 success and the json object', async () => {       
+        const loginRes = await request(server)
+            .post('/login')
+            .type('application/x-www-form-urlencoded')
+            .send(loginPayload)
+            .expect(200); 
         const res = await request(server)
             .post('/api/v1/channels')
+            .set('Cookie', [`token=${loginRes.body.token}`])
             .send(postRequestPayload.Succeed201)
             .expect(201);
 
