@@ -42,7 +42,7 @@ describe('POST /login', () => {
             .send(postRequestPayload.Succeed200)
             .expect(200);
 
-        const jwtTokenInRegex = /^([a-zA-Z0-9_=]+)\.([a-zA-Z0-9_=]+)\.([a-zA-Z0-9_\-\+\/=]*)/;
+        const jwtTokenInRegex = /^(Bearer\s[a-zA-Z0-9_=]+)\.([a-zA-Z0-9_=]+)\.([a-zA-Z0-9_\-\+\/=]*)/;
         
         expect(res.body.token).toMatch(jwtTokenInRegex);
     });
