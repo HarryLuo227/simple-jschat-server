@@ -16,7 +16,7 @@ const loginPayload = {
 const succeed201payload = {
     content: 'This is a unit test message sent from user {tester} !!!',
     userId: 1,
-    channelId: '9667fd9d-051d-415e-b968-7a91cd6fa755'
+    channelId: ''
 }
 
 const postRequestPayload = {
@@ -31,6 +31,8 @@ describe('POST /api/v1/chat', () => {
             .type('application/x-www-form-urlencoded')
             .send(loginPayload)
             .expect(200);
+        const channelResult = await db.exec('SELECT * FROM channels WHERE name = \'General\'');
+        postRequestPayload.Succeed201.channelId = channelResult.rows[0].id
         const res = await request(server)
             .post(endpoint)
             .set('Cookie', [`token=${loginRes.body.token}`])

@@ -1,6 +1,6 @@
 const request = require('supertest');
 const server = require('../app');
-const { login } = require('../services/login');
+const db = require('../db/index');
 
 afterEach(async () => {
     if(server) {
@@ -21,9 +21,7 @@ describe('GET /api/v1/users', () => {
             fullname: "tester",
             account: "tester@example.com",
             password: "123456",
-            birth: "1999-12-31T16:00:00.000Z",
-            created_at: "2024-04-08T08:28:59.275Z",
-            modified_at: "2024-04-08T08:28:59.275Z"
+            birth: "2000-01-01T00:00:00.000Z",
         }
         
         const loginRes = await request(server)
@@ -41,9 +39,18 @@ describe('GET /api/v1/users', () => {
                 expect(res.body).toEqual(expectedNoDataRespsonse);
                 break;
             case 1:
-                expect(res.body).toEqual(expectedResponse);
+                expect(res.body.id).toEqual(expectedResponse.id);
+                expect(res.body.fullname).toEqual(expectedResponse.fullname);
+                expect(res.body.account).toEqual(expectedResponse.account);
+                expect(res.body.password).toEqual(expectedResponse.password);
+                expect(res.body.birth).toEqual(expectedResponse.birth);
                 break;
             default:
+                expect(res.body[0].id).toEqual(expectedResponse.id);
+                expect(res.body[0].fullname).toEqual(expectedResponse.fullname);
+                expect(res.body[0].account).toEqual(expectedResponse.account);
+                expect(res.body[0].password).toEqual(expectedResponse.password);
+                expect(res.body[0].birth).toEqual(expectedResponse.birth);
                 break;
         }
     });
@@ -56,9 +63,7 @@ describe('GET /api/v1/users/:userId', () => {
             fullname: "tester",
             account: "tester@example.com",
             password: "123456",
-            birth: "1999-12-31T16:00:00.000Z",
-            created_at: "2024-04-08T08:28:59.275Z",
-            modified_at: "2024-04-08T08:28:59.275Z"
+            birth: "2000-01-01T00:00:00.000Z",
         }
 
         const userId = 1;
@@ -73,14 +78,19 @@ describe('GET /api/v1/users/:userId', () => {
             .set('Cookie', [`token=${loginRes.body.token}`])
             .expect(200);
         
-        expect(res.body).toEqual(expectedResponse);
+        expect(res.body.id).toEqual(expectedResponse.id);
+        expect(res.body.fullname).toEqual(expectedResponse.fullname);
+        expect(res.body.account).toEqual(expectedResponse.account);
+        expect(res.body.password).toEqual(expectedResponse.password);
+        expect(res.body.birth).toEqual(expectedResponse.birth);
     });
 });
 
 describe('GET /api/v1/users/:userId/channels', () => {
     it('should return 200 and json object with all channels belong to the user', async () => {
+        const channelResult = await db.exec('SELECT id FROM channels WHERE name = \'General\'');
         const expectedResponse = {
-            id: '9667fd9d-051d-415e-b968-7a91cd6fa755',
+            id: channelResult.rows[0].id,
             name: 'General',
             type: 'public'
         }

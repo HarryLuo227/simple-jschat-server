@@ -1,0 +1,9 @@
+Dockerfile
+coverage
+envs
+imgs
+node_modules
+sql
+README.md
+.git
+.gitignore

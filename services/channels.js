@@ -19,6 +19,17 @@ async function listAllChannelsByUser(req, res) {
     }
 }
 
+async function getByName(req, res) {
+    try {
+        const sql = 'SELECT * FROM channels WHERE name = \'General\'';
+        const result = await db.exec(sql);
+        return result.rows[0];
+    } catch (err) {
+        logger.error(`Fatal error should not occurred caught: ${err}`);
+        throw err;
+    }
+}
+
 async function create(req, res) {
     const client = await db.pool.connect();
 
@@ -75,5 +86,6 @@ async function create(req, res) {
 
 module.exports = {
     listAllChannelsByUser,
+    getByName,
     create
 }

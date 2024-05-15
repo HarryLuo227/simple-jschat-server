@@ -1,5 +1,6 @@
 require('dotenv').config({
-    path: './envs/localhost.env'
+    // path: './envs/localhost.env'
+    path: './testexample.env'
 });
 
 /** @type {import('jest').Config} */

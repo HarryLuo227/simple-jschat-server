@@ -52,7 +52,7 @@ describe('POST /registry', () => {
         expect(res.body.fullname).toEqual(postRequestPayload.Succeed201.fullname);
         expect(res.body.account).toEqual(postRequestPayload.Succeed201.account);
         expect(res.body.password).toEqual(postRequestPayload.Succeed201.password);
-        expect(res.body.birth).toEqual('1999-12-31T16:00:00.000Z');
+        expect(res.body.birth).toEqual('2000-01-01T00:00:00.000Z');
 
         await removeRegistryTestData();
     });
@@ -89,9 +89,10 @@ async function removeRegistryTestData() {
         ]
         const res = await db.exec(getNewUserIdSql, values);
         const removeTestDataDefaultChannelSql = 'DELETE FROM user_channels WHERE user_id = $1 AND channel_id = $2';
+        const officialChannel = await db.exec('SELECT * FROM channels WHERE name = \'General\'');
         const removeTestDataDefaultChannelValues = [
             res.rows[0].id,
-            '9667fd9d-051d-415e-b968-7a91cd6fa755'
+            officialChannel.id
         ]
         await db.exec(removeTestDataDefaultChannelSql, removeTestDataDefaultChannelValues);
         const sql = 'DELETE FROM users WHERE account = $1';

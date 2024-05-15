@@ -1,6 +1,7 @@
 const logger = require('../utils/logger');
 const db = require('../db/index');
 const util = require('../utils/util');
+const { cli } = require('winston/lib/winston/config');
 
 async function register(req, res) {
     const client = await db.pool.connect();
@@ -29,10 +30,11 @@ async function register(req, res) {
 
         // Add default channel
         logger.debug('Add default channel for new user');
+        const channelResult = await client.query('SELECT * FROM channels WHERE name = \'General\'');
         const createUserChannelSql = 'INSERT INTO user_channels(user_id, channel_id) VALUES ($1, $2) RETURNING *';
         const createUserChannelValues = [
             result.rows[0].id,
-            '9667fd9d-051d-415e-b968-7a91cd6fa755'
+            channelResult.rows[0].id
         ]
         const createUserChannelResult = await client.query(createUserChannelSql, createUserChannelValues);
         if(createUserChannelResult.rowCount !== 1) {

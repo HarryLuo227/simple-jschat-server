@@ -184,11 +184,11 @@ router.get('/:id/channels', async (req, res) => {
     }
 });
 
-router.get('/:id/chat', (req, res) => {
+router.get('/:id/chat', async (req, res) => {
     logger.debug('Redirect to default chatroom');
     const userId = req.params.id;
-    const defaultChatUUID = '9667fd9d-051d-415e-b968-7a91cd6fa755'
-    res.redirect(`/api/v1/users/${userId}/chat/${defaultChatUUID}`);
+    const officialChannel = await channelService.getByName(req, res);
+    res.redirect(`/api/v1/users/${userId}/chat/${officialChannel.id}`);
 });
 
 router.get('/:id/chat/:uuid', async (req, res) => {
