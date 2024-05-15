@@ -5,6 +5,37 @@ This is a simple practice project of chat backend that uses both **HTTP** and **
 - Chatroom features implement
 - Unit test of all API endpoints
 
+## Setup
+
+### Prerequisite
+
+***You should have `docker` and `docker compose` installed in your local environment.***
+
+### Procedures
+
+1. Clone project and change current directory to this project root directory.
+2. Run below command in terminal to setup app:
+   ```Bash
+   sudo docker compose up --build -d
+   ``` 
+
+> [!TIP]
+> If you want to run the test, execute below command after you run up the app:
+> ```Bash
+> sudo docker exec -it jschat-app-server npm run test
+> ```
+
+## Close and remove
+
+### Procedures
+
+1. Change current directory to this project root directory.
+2. Run below command in terminal to remove app:
+   ```Bash
+   sudo docker compose down
+   ```
+
+
 ## Features
 
 > [!NOTE]
